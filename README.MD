@@ -1,3 +1,6 @@
 # DBSCAN IMPLEMENTATION
 
-Usage:python dbscan.py -k <v1> -d <v2> <nome_da_entrada.txt>
+* Usage: 
+```
+> python dbscan.py -k <min_points_neighbors> -d (0 – Supremum distance | 1 – Manhattan distance | 2 – Euclidean distance ) <file-name>.txt"
+```

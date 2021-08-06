@@ -1,10 +1,7 @@
 import random
 import sys
 
-MESSAGE = f"Usage: {sys.argv[0]} -k (0 – supremum distance | 1 – manhattan distance | 2 – Euclidean distance ) -d <number-of-neighboring> <file-name>.txt"
-
-def distance_function(op: int):
-    print("distance functions")
+MESSAGE = f"Usage: {sys.argv[0]} -k <min_points_neighbors> -d (0 – Supremum distance | 1 – Manhattan distance | 2 – Euclidean distance ) <file_name>.txt"
 
 def main():
     if not len(sys.argv) == 6:
