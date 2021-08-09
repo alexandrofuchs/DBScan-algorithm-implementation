@@ -1,4 +1,5 @@
-import random
+from pkg.calculate_eps_neighborhood import calculate_eps_neighborhood
+from pkg.point import Point
 import sys
 
 MESSAGE = f"""
@@ -11,17 +12,6 @@ Usage: {sys.argv[0]} -k <value> -e <eps_value> -d <option_value> <file_name>.txt
 
 """
 
-def distance_function(option: int, p: list[float], q:list[float]):
-    if(option == 0):
-        print(" steps... ")
-    if(option == 1):
-        print(" steps... ")
-    if(option == 1):
-        print(" steps... ")
-
-def DbScan(dataset: list, choose_point: list, eps: float, minPts: int):
-    print("alg steps...")
-
 def validade_args(args: list[str]):
     if not args[0] == '-k' or not args[1].isnumeric():
         raise SystemExit(MESSAGE)
@@ -31,14 +21,21 @@ def validade_args(args: list[str]):
         raise SystemExit(MESSAGE)
 
 def main():
+
+    # valida numero de argumentos
+
     if not len(sys.argv) == 8:
         raise SystemExit(MESSAGE)
 
     arguments = sys.argv[1:7]
 
+    # valida parametros
+
     if not arguments:
         raise SystemExit(MESSAGE)
-    validade_args(arguments)
+    validade_args(arguments) 
+
+    # valida arquivo
 
     file_path = sys.argv[7]
 
@@ -47,7 +44,6 @@ def main():
     
     try:
         file = open(file_path, 'r')
-
     except TypeError:
         raise SystemExit(MESSAGE)
 
@@ -55,24 +51,19 @@ def main():
         raise SystemExit(MESSAGE) 
     else:
         headers = file.readline()
-        print(headers)
         points = []
         for row in file:
             columns = row.split(' ')
-            point = [float(c) for c in columns[1:] if c]        
-            points.append(point)
+            id = columns[0]
+            coordinate = [float(c) for c in columns[1:] if c]        
+            points.append(Point(id, coordinate))
         
-        print("points: {}".format(points))
-
-        minPts = arguments[1]
-        eps = arguments[3]
-        distance_function = arguments[5]
+        # dados formatados 
         
-        core_points = []
-        border_points = []
-        noise = []
+        print("headers: {}".format(headers))
 
-        DbScan(points, random.choice(points), eps, minPts)
+        for point in points:
+            print(point)
 
         file.close()
 
