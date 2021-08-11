@@ -1,2 +1,2 @@
-def DbScan(dataset: list, choose_point: list, eps: float, minPts: int):
+def DbScan(dataset: list, minPts: int):
     print("alg steps...")

@@ -20,14 +20,14 @@ def example():
     # calculando distancia e selecionando vizinhos de cada ponto
 
     for i in range(len(points)):
-        calculate_eps_neighborhood(points, points[i], eps, option_calc_distance)
-        print('id: {} neighbors: {}'.format(points[i].id, points[i].get_neighboors()) )
+        calculate_eps_neighborhood(
+            points, points[i], eps, option_calc_distance)
+        # print('id: {} neighbors: {}'.format(
+        #     points[i].id, points[i].get_neighboors()))
 
     # algoritmo dbscan
 
-    choose_point = random.choice(points)
-    
-    DbScan(points, choose_point, eps, minPts)
+    DbScan(points,minPts)
 
 
 example()

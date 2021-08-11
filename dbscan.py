@@ -50,21 +50,43 @@ def main():
     if not file:
         raise SystemExit(MESSAGE) 
     else:
-        headers = file.readline()
+        headers = file.readline().rstrip('\n')       
+        headers = headers.split(' ')
+ 
         points = []
-        for row in file:
+
+        for row in file:        
+            row = row.lstrip()
             columns = row.split(' ')
             id = columns[0]
-            coordinate = [float(c) for c in columns[1:] if c]        
+            coordinate = [float(c) for c in columns[1:] if c]     
             points.append(Point(id, coordinate))
         
+        file.close()
+
         # dados formatados 
-        
+               
         print("headers: {}".format(headers))
 
-        for point in points:
-            print(point)
+        for p in points:            
+            print(p.format_to_file())
+        
+        # saida
 
-        file.close()
+        headers.append('group')
+        print("headers: {}".format(headers))
+
+        new_headers = "{}\n".format(" ".join(headers))
+       
+        arquivo = open('saida.txt', 'w')
+        arquivo.writelines(new_headers)
+       
+        for point in points:
+            print(point.format_to_file())
+            arquivo.writelines(point.format_to_file())
+            # print(new_row)
+        print ('arquivo saida.txt gerado com sucesso!')
+        arquivo.close()
+        
 
 main()
