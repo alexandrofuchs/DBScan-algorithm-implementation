@@ -1,15 +1,20 @@
 from .distance_functions import euclidean_distance, supremun_distance, manhattan_distance
 from .point import Point
 
-def calculate_eps_neighborhood(dataset: list[Point],  p: Point, eps: float, option_fun_distance: int) -> list[Point]:
-    if(option_fun_distance == 0):
+def calculate_eps_neighborhood(dataset: list[Point],  p: Point, eps: float, distance_metric: int) -> list[Point]:
+    if(distance_metric == 0):
         neighbors = [point for point in dataset if supremun_distance(p.coordinate, point.coordinate) <= eps]
-        p.neighbors = neighbors
-    elif(option_fun_distance == 1):
+        return neighbors
+    elif(distance_metric == 1):
         neighbors = [point for point in dataset if manhattan_distance(p.coordinate, point.coordinate) <= eps]
-        p.neighbors = neighbors
-    elif(option_fun_distance == 2):
+        return neighbors
+    elif(distance_metric == 2):
         neighbors = [point for point in dataset if euclidean_distance(p.coordinate, point.coordinate) <= eps]
-        p.neighbors = neighbors
+        return neighbors
     else:
-        raise SystemExit('invalid distance function option! usage: -d (0 | 1 | 2)')
+        raise SystemExit(
+"""    
+    Invalid distance metric option! 
+    usage: -d (Supremum distance | 1 – Manhattan distance | 2 – Euclidean distance(default))
+
+""")
