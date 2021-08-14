@@ -13,6 +13,15 @@ Usage: {sys.argv[0]} -k <value> -e <eps_value> -d <option_value> <file_name>.txt
 
 """
 
+def distance_metric_options(opt: int):
+    if opt == 0:
+        return 'Supremun'
+    elif opt == 1:
+        return 'Manhattan'
+    elif opt == 2:
+        return 'Euclidean'
+    
+
 def main():
 
     # valores padrão
@@ -21,56 +30,51 @@ def main():
     distance_metric = 2 # (-d)
     minPts = 0 # valor inválido, precisa ser informado(-k)
 
-    # valida numero de argumentos
-
-    if not len(sys.argv) == 8:
-        raise SystemExit(""" \n Invalid number of arguments !' {} """.format(MESSAGE))
-
-    arguments = sys.argv[1:7]
+    arguments = sys.argv[1:]
 
     # valida parametros
 
-    print(arguments)
-
     if not arguments:
         raise SystemExit(MESSAGE)
-    
-    if not arguments[0] == '-k' or not arguments[1].isnumeric():
+
+    if not '-k' in arguments:
         raise SystemExit(""" \n "Invalid '-k' value" !' {} """.format(MESSAGE))
     else:
-        minPts = int(arguments[1])
+        index = arguments.index('-k') + 1
+        if(arguments[index].isnumeric()):
+            minPts = int(arguments[index])
+            if not minPts > 0:                
+                raise SystemExit(""" \n "Invalid '-k' value" !' {} """.format(MESSAGE))
 
-    if arguments[2] == '-e': 
+    if '-e' in arguments: 
+        index = arguments.index('-e') + 1
         try:
-            eps = float(arguments[3])
+            eps = float(arguments[index])
         except ValueError:
             raise SystemExit(""" \n 'the values of params need to be a number!!' {} """.format(MESSAGE))    
-    else:
-        raise SystemExit(MESSAGE)
        
-    if arguments[4] == '-d':
+    if '-d' in arguments: 
+        index = arguments.index('-d') + 1
         try:
-            distance_metric = float(arguments[5])
+            distance_metric = int(arguments[index])
         except ValueError:
             raise SystemExit(""" \n 'the values of params need to be a number!!' {} """.format(MESSAGE))    
 
     # valida arquivo
 
-    file_path = sys.argv[7]
-
-    if not file_path:
-        raise SystemExit(""" \n Invalid File !' {} """.format(MESSAGE))
+    file_path = [x for x in arguments if x.endswith('.txt')]
     
+    if len(file_path) != 1:
+        raise SystemExit(""" \n Invalid file!' {} """.format(MESSAGE))
     try:
-        file = open(file_path, 'r')
+        file = open(file_path[0], 'r')
     except ValueError:
         raise SystemExit(""" \n Invalid File {} """.format(MESSAGE))    
 
     # transforma dados em points e headers
 
     headers = file.readline().rstrip('\n')       
-    headers = headers.split(' ')
- 
+    headers = headers.split(' ') 
     points = []
 
     for row in file:        
@@ -82,20 +86,29 @@ def main():
     
     file.close()
 
-    # clusterização
+    print(
+    f"""    
+File: {file_path[0]}
+Eps(range): {eps}
+Min Points(core point): {minPts}
+Distance Metric Option: {distance_metric_options(distance_metric)}
+    """)
 
-    print(f"eps: {eps}")
-    print(f"minPoints: {minPts}")
-    print(f"distance metric Option: {distance_metric}")
+    # clusterização
 
     DbScan(points, eps, distance_metric, minPts)
 
     # saida
 
     headers.append('group')
-    print("headers: {}".format(headers))
+    
+    print("{}".format(headers)
+        .replace('[','')
+        .replace(']','')
+        .replace(',','')
+        .replace("'",""))
 
-    new_headers = "{}\n".format(" ".join(headers))
+    new_headers = "{}".format(" ".join(headers))
     
     arquivo = open('saida.txt', 'w')
     arquivo.writelines(new_headers)
@@ -105,6 +118,5 @@ def main():
         arquivo.writelines(point.format_to_file()) 
     print (f""" Arquivo "{arquivo.name}" gerado com sucesso! """)
     arquivo.close()
-        
 
 main()
