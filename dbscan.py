@@ -102,21 +102,16 @@ Distance Metric Option: {distance_metric_options(distance_metric)}
 
     headers.append('group')
     
-    print("{}".format(headers)
-        .replace('[','')
-        .replace(']','')
-        .replace(',','')
-        .replace("'",""))
-
+    print("{}".format(" ".join(headers)))
     new_headers = "{}".format(" ".join(headers))
     
-    arquivo = open('saida.txt', 'w')
-    arquivo.writelines(new_headers)
+    saida = open('saida.txt', 'w')
+    saida.writelines(new_headers)
     
     for point in points:
         print(point.format_to_file())
-        arquivo.writelines(point.format_to_file()) 
-    print (f""" Arquivo "{arquivo.name}" gerado com sucesso! """)
-    arquivo.close()
+        saida.writelines(point.format_to_file()) 
+    print (f""" Arquivo "{saida.name}" gerado com sucesso! """)
+    saida.close()
 
 main()
