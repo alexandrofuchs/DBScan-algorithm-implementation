@@ -1,14 +1,16 @@
+from types import coroutine
 from pkg.clusterization import DbScan
 from pkg.point import Point
 import sys
+import re
 
 MESSAGE = f"""
 
-Usage: {sys.argv[0]} -k <value> -e <eps_value> -d <option_value> <file_name>.txt
+Usage: {sys.argv[0]} -k <k_value> [ -e <eps_value> ] [ -d <distance_option_value> ] <file_name>.txt
 
 -k : MinPts, Minimum number of points in an Eps-neighbourhood to be a core point(Required*)
 -e : Eps, Maximum radius of the neighborhood(default = 1)
--d : Distance Metric, 0 – Supremum distance | 1 – Manhattan distance | 2 – Euclidean distance(default)
+-d : Distance Metric: 0 – Supremum distance | 1 – Manhattan distance | 2 – Euclidean distance(default)
 
 
 """
@@ -38,51 +40,58 @@ def main():
         raise SystemExit(MESSAGE)
 
     if not '-k' in arguments:
-        raise SystemExit(""" \n "Invalid '-k' value" !' {} """.format(MESSAGE))
+        raise SystemExit("""\nMessage:'-k' param is required! {} """.format(MESSAGE))
     else:
         index = arguments.index('-k') + 1
         if(arguments[index].isnumeric()):
             minPts = int(arguments[index])
-            if not minPts > 0:                
-                raise SystemExit(""" \n "Invalid '-k' value" !' {} """.format(MESSAGE))
+        if not minPts > 0:                
+            raise SystemExit("""\nMessage: Invalid '-k' value! Needs to be an integer number' {} """.format(MESSAGE))
 
     if '-e' in arguments: 
         index = arguments.index('-e') + 1
         try:
             eps = float(arguments[index])
         except ValueError:
-            raise SystemExit(""" \n 'the values of params need to be a number!!' {} """.format(MESSAGE))    
+            raise SystemExit("""\nMessage: values of params need to be a number! {} """.format(MESSAGE))    
        
     if '-d' in arguments: 
         index = arguments.index('-d') + 1
         try:
             distance_metric = int(arguments[index])
         except ValueError:
-            raise SystemExit(""" \n 'the values of params need to be a number!!' {} """.format(MESSAGE))    
+            raise SystemExit("""\nMessage: values of params need to be a number!! {} """.format(MESSAGE))    
 
     # valida arquivo
 
     file_path = [x for x in arguments if x.endswith('.txt')]
-    
+   
     if len(file_path) != 1:
-        raise SystemExit(""" \n Invalid file!' {} """.format(MESSAGE))
+        raise SystemExit("""\nMessage: Invalid file!' {} """.format(MESSAGE))
     try:
         file = open(file_path[0], 'r')
+    except FileNotFoundError:
+        raise SystemExit("""\nMessage: File Not found ! {} """.format(MESSAGE))    
     except ValueError:
-        raise SystemExit(""" \n Invalid File {} """.format(MESSAGE))    
+        raise SystemExit("""\nMessage: Invalid File! {} """.format(MESSAGE))    
 
     # transforma dados em points e headers
 
-    headers = file.readline().rstrip('\n')       
+    headers = file.readline().strip('\n').strip(None)       
     headers = headers.split(' ') 
     points = []
 
+
     for row in file:        
         row = row.strip()
-        columns = row.split(' ')
+        columns = row.split()
         id = columns[0]
-        coordinate = [float(c) for c in columns[1:] if c]     
-        points.append(Point(id, coordinate))
+        try:
+            coordinate = [float(c) for c in columns[1:] if len(c) > 0 and not c.isalpha() ] 
+            # print(coordinate)
+            points.append(Point(id, coordinate))
+        except ValueError:
+            raise SystemExit('The values of dataset need to be numeric')
     
     file.close()
 
@@ -101,7 +110,8 @@ Distance Metric Option: {distance_metric_options(distance_metric)}
     # saida
 
     headers.append('group')
-    
+    headers.append('\n')
+
     print("{}".format(" ".join(headers)))
     new_headers = "{}".format(" ".join(headers))
     
@@ -111,7 +121,16 @@ Distance Metric Option: {distance_metric_options(distance_metric)}
     for point in points:
         print(point.format_to_file())
         saida.writelines(point.format_to_file()) 
-    print (f""" Arquivo "{saida.name}" gerado com sucesso! """)
+    print (f""" 
+Input Data: {file.name}
+Output Data: {saida.name}
+Eps(range): {eps}
+Min Points(core point): {minPts}
+Distance Metric Option: {distance_metric_options(distance_metric)}
+
+Output file has been generated!!
+    
+    """)
     saida.close()
 
 main()

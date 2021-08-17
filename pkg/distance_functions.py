@@ -22,4 +22,7 @@ def supremun_distance(p: list[float], q: list[float]):
     distances = []
     for i in range(len(p)):
         distances.append(abs(p[i]-q[i]))
-    return max(distances)
+    if(len(distances) > 0):
+        return max(distances)
+    else:
+        raise SystemExit("Invalid points")

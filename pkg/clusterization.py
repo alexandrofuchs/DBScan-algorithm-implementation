@@ -4,7 +4,7 @@ from pkg.point import Point
 def DbScan(points: list[Point], eps: float, distance_metric: int, minPts: int) -> list[Point]:
     i = 0
     for point in points:
-        if point.cluster_id != None: # point already processed
+        if point.cluster_id != None: # point has already been processed
             continue
         point.neighbors = calculate_eps_neighborhood(points, point, eps, distance_metric)
         if len(point.neighbors) < minPts: # if is not a core point
