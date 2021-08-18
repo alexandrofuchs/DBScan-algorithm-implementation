@@ -1,9 +1,9 @@
 class Point:
-    def __init__(self, id: str, coordinate: list[float]):
+    def __init__(self, id: str, coordinate: list):
         self.id = id
         self.cluster_id = None
         self.coordinate = coordinate
-        self.neighbors = list[Point]
+        self.neighbors = list
         
     def add_to_cluster(self, cluster_id: str):
         self.cluster_id = cluster_id

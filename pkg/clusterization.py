@@ -1,7 +1,7 @@
 from pkg.calculate_eps_neighborhood import calculate_eps_neighborhood
 from pkg.point import Point
 
-def DbScan(points: list[Point], eps: float, distance_metric: int, minPts: int) -> list[Point]:
+def DbScan(points: list, eps: float, distance_metric: int, minPts: int) -> list:
     i = 0
     for point in points:
         if point.cluster_id != None: # point has already been processed
